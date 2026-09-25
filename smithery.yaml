@@ -1,0 +1,100 @@
+# Smithery listing for the XCrap MCP server.
+# https://smithery.ai/docs
+#
+# The display name leads with "Twitter / X" on purpose: developers search the
+# registry for the platform, not for the tool that reads it, and a server named
+# only "xcrap" is invisible to someone typing "twitter".
+
+name: Twitter / X Tools by xcrap.cc — Search, Unroll Threads, Extract Profiles
+displayName: Twitter / X Tools by xcrap.cc — Search, Unroll Threads, Extract Profiles
+title: Twitter / X Tools by xcrap.cc — Search, Unroll Threads, Extract Profiles
+version: 1.3.0
+description: >-
+  Read Twitter / X without an account, an API key or a login. Search posts with
+  X's own operators, fetch any public post, unroll a whole thread from one link,
+  read the replies under it, extract profiles, timelines, full account
+  histories and follower lists, list the images and videos attached to a post,
+  pull up to 50 posts in one call, and check what is trending. Twelve read-only tools, markdown-first
+  output sized for a model's context window, and no credentials to configure.
+homepage: https://xcrap.cc
+documentation: https://xcrap.cc/docs
+license: MIT
+icon: https://xcrap.cc/favicon.ico
+
+tags:
+  - twitter
+  - x
+  - tweet
+  - tweets
+  - thread
+  - unroll
+  - timeline
+  - followers
+  - replies
+  - search
+  - profile
+  - social-media
+  - scraping
+  - research
+  - no-api-key
+
+startCommand:
+  type: stdio
+
+  # Nothing needs configuring; the base URL exists only for proxies.
+  configSchema:
+    type: object
+    required: []
+    properties:
+      xcrapBaseUrl:
+        type: string
+        format: uri
+        title: XCrap base URL
+        description: >-
+          API origin. Leave it as https://xcrap.cc; change it only to route
+          requests through a proxy you control.
+        default: https://xcrap.cc
+    additionalProperties: false
+
+  commandFunction: |-
+    (config) => ({
+      command: 'node',
+      args: ['src/index.js'],
+      env: {
+        XCRAP_BASE_URL: (config && config.xcrapBaseUrl) || 'https://xcrap.cc'
+      }
+    })
+
+  exampleConfig:
+    xcrapBaseUrl: https://xcrap.cc
+
+build:
+  dockerBuildPath: .
+
+# Listed for the registry's tool preview. Every tool is read-only: nothing here
+# posts, likes, follows, or modifies anything on X.
+tools:
+  - name: xcrap_get_tweet
+    description: Fetch one X post by URL or id — text, author, timestamp, metrics, media, poll, quote, community note.
+  - name: xcrap_get_thread
+    description: Unroll a whole X thread from any post in it, in order, the original author's posts only.
+  - name: xcrap_get_user
+    description: Fetch a public X profile — bio, location, website, join date, verification, follower counts.
+  - name: xcrap_get_user_tweets
+    description: Fetch a page of an account's posts, newest first, with cursor pagination.
+  - name: xcrap_search
+    description: "Full-text search over X posts with X's own operators (from:, \"phrase\", lang:), latest, top, photos or videos, with date windows."
+  - name: xcrap_get_replies
+    description: Fetch a page of the direct replies to an X post, most liked or newest first.
+  - name: xcrap_get_user_history
+    description: Export up to 1,000 of an account's posts in one call, newest first, optionally inside a date window.
+  - name: xcrap_get_followers
+    description: Fetch a page of the accounts following an X account.
+  - name: xcrap_get_following
+    description: Fetch a page of the accounts an X account follows.
+  - name: xcrap_get_trends
+    description: Fetch what is trending on X right now, with post volumes.
+  - name: xcrap_list_media
+    description: List every image, video and GIF on a post, with dimensions, alt text and direct download URLs.
+  - name: xcrap_bulk
+    description: Resolve up to 50 X posts in a single call — one request instead of fifty.
